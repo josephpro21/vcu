@@ -3,7 +3,7 @@ table 50101 "Leaders"
     DataClassification = CustomerContent;
     fields
     {
-        field(1; "No."; code[20])
+        field(1; "Leader No."; code[20])
         {
             DataClassification = CustomerContent;
         }
@@ -27,9 +27,21 @@ table 50101 "Leaders"
     }
     keys
     {
-        key(PK; "No.")
+        key(PK; "Leader No.")
         {
             Clustered = true;
         }
     }
+    trigger OnInsert()
+    var
+        NoSerieMgt: Codeunit "No. Series";
+        LeadersSetup: Record "Leaders Setup";
+    begin
+        if "Leader No." = '' then begin
+            LeadersSetup.Get();
+            LeadersSetup.TestField("Leaders No.");
+            "Leader No." := NoSerieMgt.GetNextNo(LeadersSetup."Leaders No.", Today, true);
+        end;
+    end;
+
 }
